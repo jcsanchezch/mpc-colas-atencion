@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Paneles;
 
+use App\Http\Controllers\Controller;
 use App\Models\Ticket;
 use Inertia\Inertia;
+use function App\Http\Controllers\today;
 
 class PanelController extends Controller
 {

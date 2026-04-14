@@ -1,15 +1,18 @@
 <?php
 
+use App\Http\Controllers\Atencion\TicketController as AtencionTicketController;
+use App\Http\Controllers\Atencion\DiaController;
+use App\Http\Controllers\Atencion\UserController;
+use App\Http\Controllers\Paneles\PanelController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Tickets\TicketController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\TicketController;
-use App\Http\Controllers\PanelController;
 
 // Tickets
-Route::get('/ticket', [TicketController::class, 'index'])->name('ticket.index');
-Route::post('/ticket', [TicketController::class, 'store'])->name('ticket.store');
+Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
+Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
 
 // Panel de Llamadas
 Route::get('/panel', [PanelController::class, 'index'])->name('panel.index');
@@ -24,15 +27,13 @@ Route::get('/', function () {
     ]);
 });
 
-use App\Http\Controllers\ClerkController;
-
-Route::middleware(['auth', 'verified', 'role:ventanillero|admin'])->group(function () {
-    Route::get('/dashboard', [ClerkController::class, 'index'])->name('dashboard');
-    Route::post('/clerk/call', [ClerkController::class, 'callNext'])->name('clerk.callNext');
-    Route::post('/clerk/{ticket}/recall', [ClerkController::class, 'reCall'])->name('clerk.reCall');
-    Route::post('/clerk/{ticket}/serve', [ClerkController::class, 'serve'])->name('clerk.serve');
-    Route::post('/clerk/{ticket}/complete', [ClerkController::class, 'complete'])->name('clerk.complete');
-    Route::post('/clerk/{ticket}/abandon', [ClerkController::class, 'abandon'])->name('clerk.abandon');
+Route::middleware(['auth', 'verified', 'role:Ventanilla|Admin'])->group(function () {
+    Route::get('/dashboard', [AtencionTicketController::class, 'index'])->name('dashboard');
+    Route::post('/tickets/call', [AtencionTicketController::class, 'callNext'])->name('tickets.call');
+    Route::post('/tickets/{ticket}/recall', [AtencionTicketController::class, 'reCall'])->name('tickets.recall');
+    Route::post('/tickets/{ticket}/serve', [AtencionTicketController::class, 'serve'])->name('tickets.serve');
+    Route::post('/tickets/{ticket}/complete', [AtencionTicketController::class, 'complete'])->name('tickets.complete');
+    Route::post('/tickets/{ticket}/abandon', [AtencionTicketController::class, 'abandon'])->name('tickets.abandon');
 });
 
 
@@ -44,12 +45,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/tramites', [ProfileController::class, 'updateTramites'])->name('profile.tramites');
 });
 
-use App\Http\Controllers\UserController;
-
-Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
+Route::middleware(['auth', 'verified', 'role:Admin'])->group(function () {
     Route::resource('users', UserController::class)->except(['show']);
-    Route::resource('ventanillas', \App\Http\Controllers\VentanillaController::class)->except(['show']);
-    Route::resource('tramites', \App\Http\Controllers\TramiteController::class)->except(['show']);
+    Route::resource('dias', DiaController::class)->except(['show']);
+    Route::resource('ventanillas', \App\Http\Controllers\Atencion\VentanillaController::class)->except(['show']);
+    Route::resource('tramites', \App\Http\Controllers\Atencion\TramiteController::class)->except(['show']);
 });
 
 require __DIR__ . '/auth.php';

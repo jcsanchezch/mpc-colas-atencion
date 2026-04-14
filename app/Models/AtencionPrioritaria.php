@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class AtencionPrioritaria extends Model
 {
+    protected $table = 'atenciones_prioritarias';
+
     protected $fillable = ['nombre'];
 
     public function tickets()

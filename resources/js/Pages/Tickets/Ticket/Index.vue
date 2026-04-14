@@ -7,6 +7,10 @@ const props = defineProps({
         type: Array,
         required: true,
     },
+    atencionesPrioritarias: {
+        type: Array,
+        required: true,
+    },
 });
 
 const tramitesOrdenados = computed(() => {
@@ -22,7 +26,7 @@ const tramiteDefault = props.tramites.find(t => t.nombre.toLowerCase().includes(
 const form = useForm({
     dni: '',
     tramite_id: tramiteDefault,
-    tiene_discapacidad: false,
+    atencion_prioritaria_id: null,
 });
 
 const formKey = ref(0);
@@ -44,8 +48,8 @@ const seleccionarTramite = (id) => {
     form.tramite_id = id;
 };
 
-const toggleDiscapacidad = () => {
-    form.tiene_discapacidad = !form.tiene_discapacidad;
+const seleccionarAtencion = (id) => {
+    form.atencion_prioritaria_id = form.atencion_prioritaria_id === id ? null : id;
 };
 
 const iniciarCountdown = () => {
@@ -66,20 +70,22 @@ const limpiarCountdown = () => {
 };
 
 const enviar = () => {
-    form.post(route('ticket.store'), {
+    form.post(route('tickets.store'), {
         preserveScroll: true,
         onSuccess: (page) => {
             if (page.props.flash?.numeroTurno) {
                 datosExito.value = {
-                    numeroTurno: page.props.flash.numeroTurno,
-                    dni: page.props.flash.dni,
-                    preferencial: form.tiene_discapacidad,
-                    tramite: tramitesOrdenados.value.find(t => t.id === form.tramite_id)?.nombre ?? '',
+                    numeroTurno:   page.props.flash.numeroTurno,
+                    dni:           page.props.flash.dni,
+                    prioridad:     page.props.flash.prioridad,
+                    atencionNombre: page.props.flash.atencionNombre,
+                    tramite:       tramitesOrdenados.value.find(t => t.id === form.tramite_id)?.nombre ?? '',
                 };
                 iniciarCountdown();
             }
             form.reset();
             form.tramite_id = tramiteDefault;
+            form.atencion_prioritaria_id = null;
             formKey.value++;
         },
     });
@@ -111,12 +117,17 @@ const teclas = ['1','2','3','4','5','6','7','8','9','DEL','0',''];
                 </div>
             </div>
 
+            <div class="bg-white/10 backdrop-blur rounded-3xl p-6 mb-4 text-center">
+                <p class="text-blue-200 text-lg mb-2">Número de turno</p>
+                <span class="text-8xl font-black text-white">{{ datosExito.numeroTurno }}</span>
+            </div>
+
             <div class="bg-teal-400 rounded-2xl py-4 px-8 mb-4">
                 <span class="text-2xl font-bold text-white">{{ datosExito.tramite }}</span>
             </div>
 
-            <div v-if="datosExito.preferencial" class="bg-amber-400 rounded-2xl py-4 px-8 mb-6">
-                <span class="text-2xl font-black text-amber-900">Preferencial</span>
+            <div v-if="datosExito.prioridad" class="bg-amber-400 rounded-2xl py-4 px-8 mb-6">
+                <span class="text-2xl font-black text-amber-900">{{ datosExito.atencionNombre }}</span>
             </div>
 
             <p class="text-2xl text-blue-200 mb-10">
@@ -138,13 +149,16 @@ const teclas = ['1','2','3','4','5','6','7','8','9','DEL','0',''];
                 <p class="text-blue-200 text-2xl mt-2">Toque las opciones para continuar</p>
             </div>
 
+            <p v-if="form.errors.dia" class="mb-4 text-center text-red-300 text-xl font-semibold">
+                {{ form.errors.dia }}
+            </p>
+
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                 <!-- COLUMNA IZQUIERDA: DNI + Teclado numérico -->
                 <div class="bg-white/10 backdrop-blur rounded-3xl p-6">
                     <h2 class="text-white text-2xl font-bold mb-4">1. Ingrese su DNI</h2>
 
-                    <!-- Display DNI -->
                     <div class="bg-white/20 rounded-2xl py-5 px-6 mb-2 text-center min-h-[80px] flex items-center justify-center">
                         <span class="text-5xl font-black text-white tracking-widest">
                             {{ dniDisplay || '––––––––' }}
@@ -178,7 +192,7 @@ const teclas = ['1','2','3','4','5','6','7','8','9','DEL','0',''];
                     </div>
                 </div>
 
-                <!-- COLUMNA DERECHA: Trámite + Preferencial -->
+                <!-- COLUMNA DERECHA: Trámite + Atención prioritaria -->
                 <div class="space-y-6">
 
                     <!-- SELECCIÓN DE TRÁMITE -->
@@ -208,24 +222,35 @@ const teclas = ['1','2','3','4','5','6','7','8','9','DEL','0',''];
                         <p v-if="form.errors.tramite_id" class="mt-3 text-red-300 text-lg">{{ form.errors.tramite_id }}</p>
                     </div>
 
-                    <!-- TOGGLE PREFERENCIAL -->
-                    <button
-                        @click="toggleDiscapacidad"
-                        :class="[
-                            'w-full py-6 px-6 rounded-3xl text-xl font-semibold text-left transition-all active:scale-95',
-                            form.tiene_discapacidad
-                                ? 'bg-amber-400 text-amber-900 shadow-lg'
-                                : 'bg-white/10 text-white hover:bg-white/20'
-                        ]"
-                    >
-                        <span class="flex items-center gap-4">
-                            <span :class="['w-14 h-8 rounded-full flex items-center px-1 transition-all',
-                                form.tiene_discapacidad ? 'bg-amber-600 justify-end' : 'bg-white/30 justify-start']">
-                                <span class="w-6 h-6 rounded-full bg-white shadow"></span>
-                            </span>
-                            <span class="text-xl font-bold">Preferencial</span>
-                        </span>
-                    </button>
+                    <!-- ATENCIÓN PRIORITARIA -->
+                    <div v-if="atencionesPrioritarias.length" class="bg-white/10 backdrop-blur rounded-3xl p-6">
+                        <h2 class="text-white text-2xl font-bold mb-1">3. ¿Atención prioritaria?</h2>
+                        <p class="text-blue-200 text-sm mb-4">Opcional — toque si aplica</p>
+                        <div class="grid grid-cols-1 gap-3">
+                            <button
+                                v-for="atencion in atencionesPrioritarias"
+                                :key="atencion.id"
+                                @click="seleccionarAtencion(atencion.id)"
+                                :class="[
+                                    'w-full py-4 px-6 rounded-2xl text-lg font-semibold text-left transition-all active:scale-95',
+                                    form.atencion_prioritaria_id === atencion.id
+                                        ? 'bg-amber-400 text-amber-900 shadow-lg'
+                                        : 'bg-white/20 text-white hover:bg-white/30'
+                                ]"
+                            >
+                                <span class="flex items-center gap-3">
+                                    <span :class="['w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center',
+                                        form.atencion_prioritaria_id === atencion.id ? 'border-amber-900 bg-amber-900' : 'border-white/60']">
+                                        <span v-if="form.atencion_prioritaria_id === atencion.id" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                                    </span>
+                                    {{ atencion.nombre }}
+                                </span>
+                            </button>
+                        </div>
+                        <p v-if="form.errors.atencion_prioritaria_id" class="mt-3 text-red-300 text-lg">
+                            {{ form.errors.atencion_prioritaria_id }}
+                        </p>
+                    </div>
                 </div>
             </div>
 

@@ -10,6 +10,13 @@ class DiaVentanillaTrabajador extends Model
 
     protected $fillable = ['ventanilla_id', 'dia_id', 'trabajador_id', 'activo'];
 
+    protected function casts(): array
+    {
+        return [
+            'activo' => 'boolean',
+        ];
+    }
+
     public function dia()
     {
         return $this->belongsTo(Dia::class);

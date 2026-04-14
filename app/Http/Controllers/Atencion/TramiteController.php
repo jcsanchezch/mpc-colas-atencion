@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Atencion;
 
+use App\Http\Controllers\Controller;
 use App\Models\Tramite;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -10,7 +11,7 @@ class TramiteController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Admin/Tramites/Index', [
+        return Inertia::render('Atencion/Tramites/Index', [
             'tramites' => Tramite::orderBy('nombre')->get()
         ]);
     }
@@ -19,9 +20,11 @@ class TramiteController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:255|unique:tramites',
-            'prefijo' => 'required|string|max:2|unique:tramites'
         ]);
-        Tramite::create($request->only('nombre', 'prefijo'));
+        Tramite::create([
+            'nombre' => $request->nombre,
+            'activo'  => true,
+        ]);
         return redirect()->back()->with('success', 'Trámite creado.');
     }
 
@@ -29,9 +32,9 @@ class TramiteController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:255|unique:tramites,nombre,'.$tramite->id,
-            'prefijo' => 'required|string|max:2|unique:tramites,prefijo,'.$tramite->id
+            'activo'  => 'boolean',
         ]);
-        $tramite->update($request->only('nombre', 'prefijo'));
+        $tramite->update($request->only('nombre', 'activo'));
         return redirect()->back()->with('success', 'Trámite actualizado.');
     }
 

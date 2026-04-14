@@ -12,6 +12,7 @@ class Ticket extends Model
     protected $fillable = [
         'dia_id',
         'cliente_id',
+        'numero',
         'prioridad',
         'atencion_prioritaria_id',
         'tramite_id',
@@ -35,11 +36,14 @@ class Ticket extends Model
             'prioridad'          => 'boolean',
             'atendido'           => 'boolean',
             'cerrado'            => 'boolean',
-            'hora_esperando'     => 'datetime',
-            'hora_llamando'      => 'datetime',
-            'hora_atendiendo'    => 'datetime',
-            'hora_atendido'      => 'datetime',
-            'hora_abandonado'    => 'datetime',
+            'numero'                      => 'integer',
+            'hora_esperando'              => 'datetime',
+            'hora_llamando'               => 'datetime',
+            'hora_atendiendo'             => 'datetime',
+            'hora_atendido'               => 'datetime',
+            'hora_abandonado'             => 'datetime',
+            'tiempo_atendiendo_atendido'  => 'integer',
+            'tiempo_esperando_atendido'   => 'integer',
         ];
     }
 

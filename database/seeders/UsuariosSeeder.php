@@ -36,18 +36,21 @@ class UsuariosSeeder extends Seeder
 
         // Usuarios de prueba
         User::factory()->create([
-            'name'  => 'Admin',
-            'email' => 'admin@mail.com',
+            'name'     => 'Admin',
+            'email'    => 'admin@mail.com',
+            'password' => 'admin@mail.com',
         ])->assignRole('Admin');
 
         User::factory()->create([
-            'name'  => 'Supervisor',
-            'email' => 'supervisor@mail.com',
+            'name'     => 'Supervisor',
+            'email'    => 'supervisor@mail.com',
+            'password' => 'supervisor@mail.com',
         ])->assignRole('Supervisor');
 
         User::factory()->create([
-            'name'  => 'Ventanilla',
-            'email' => 'ventanilla@mail.com',
+            'name'     => 'Ventanilla',
+            'email'    => 'ventanilla@mail.com',
+            'password' => 'ventanilla@mail.com',
         ])->assignRole('Ventanilla');
     }
 }

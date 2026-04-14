@@ -40,21 +40,28 @@ const showingNavigationDropdown = ref(false);
                                     Dashboard
                                 </NavLink>
                                 <NavLink
-                                    v-if="$page.props.auth.user.roles.includes('admin')"
+                                    v-if="$page.props.auth.user.roles.includes('Admin')"
                                     :href="route('users.index')"
                                     :active="route().current('users.*')"
                                 >
                                     Usuarios
                                 </NavLink>
                                 <NavLink
-                                    v-if="$page.props.auth.user.roles.includes('admin')"
+                                    v-if="$page.props.auth.user.roles.includes('Admin')"
+                                    :href="route('dias.index')"
+                                    :active="route().current('dias.*')"
+                                >
+                                    Días
+                                </NavLink>
+                                <NavLink
+                                    v-if="$page.props.auth.user.roles.includes('Admin')"
                                     :href="route('ventanillas.index')"
                                     :active="route().current('ventanillas.*')"
                                 >
                                     Ventanillas
                                 </NavLink>
                                 <NavLink
-                                    v-if="$page.props.auth.user.roles.includes('admin')"
+                                    v-if="$page.props.auth.user.roles.includes('Admin')"
                                     :href="route('tramites.index')"
                                     :active="route().current('tramites.*')"
                                 >
@@ -168,21 +175,28 @@ const showingNavigationDropdown = ref(false);
                             Dashboard
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
-                            v-if="$page.props.auth.user.roles.includes('admin')"
+                            v-if="$page.props.auth.user.roles.includes('Admin')"
                             :href="route('users.index')"
                             :active="route().current('users.*')"
                         >
                             Usuarios
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
-                            v-if="$page.props.auth.user.roles.includes('admin')"
+                            v-if="$page.props.auth.user.roles.includes('Admin')"
+                            :href="route('dias.index')"
+                            :active="route().current('dias.*')"
+                        >
+                            Días
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            v-if="$page.props.auth.user.roles.includes('Admin')"
                             :href="route('ventanillas.index')"
                             :active="route().current('ventanillas.*')"
                         >
                             Ventanillas
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
-                            v-if="$page.props.auth.user.roles.includes('admin')"
+                            v-if="$page.props.auth.user.roles.includes('Admin')"
                             :href="route('tramites.index')"
                             :active="route().current('tramites.*')"
                         >

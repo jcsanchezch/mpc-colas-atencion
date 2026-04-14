@@ -22,7 +22,6 @@ return new class extends Migration
             $table->foreignId('trabajador_id')->nullable()->constrained('trabajadores');
         });
 
-
         Schema::create('tramites', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
@@ -105,7 +104,6 @@ return new class extends Migration
             $table->boolean('prioridad')->default(false);
             $table->foreignId('atencion_prioritaria_id')->nullable()->constrained('atenciones_prioritarias');
 
-
             $table->foreignId('tramite_id')->constrained('tramites');
 
             $table->timestamp('hora_esperando', 0)->nullable();
@@ -127,8 +125,6 @@ return new class extends Migration
 
             $table->timestamps();
         });
-
-
 
     }
 

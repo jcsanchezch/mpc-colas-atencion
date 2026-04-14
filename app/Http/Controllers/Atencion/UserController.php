@@ -1,15 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Atencion;
 
-use App\Models\User;
+use App\Http\Controllers\Controller;
 use App\Models\Tramite;
+use App\Models\User;
 use App\Models\Ventanilla;
-use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Inertia\Inertia;
+use Spatie\Permission\Models\Role;
+use function App\Http\Controllers\auth;
+use function App\Http\Controllers\redirect;
 
 class UserController extends Controller
 {
